@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chat-container {
+            width: 360px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chat-box {
+            flex-grow: 1;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        #send-button {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .user-message {
+            background-color: #007bff;
+            color: #fff;
+            text-align: right;
+        }
+
+        .bot-message {
+            background-color: #ffc107;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box">
+            <div class="bot-message">Hello! How can I assist you today?</div>
+        </div>
+        <input type="text" id="user-name" placeholder="Enter your name...">
+        <input type="text" id="user-role" placeholder="Enter your role (hawker or buyer)...">
+        <input type="text" id="user-query" placeholder="Ask your question..." disabled>
+        <button id="send-button" disabled>Send</button>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chat-box");
+        const userNameInput = document.getElementById("user-name");
+        const userRoleInput = document.getElementById("user-role");
+        const userQueryInput = document.getElementById("user-query");
+        const sendButton = document.getElementById("send-button");
+
+        const generalResponses = [
+            "I'm here to help.",
+            "Please let me know your queries.",
+            "I'm all ears.",
+            "Ready to assist!"
+        ];
+
+        const buyerResponses = [
+            "How can I assist you in finding products?",
+            "Looking for something specific?",
+            "Want to explore local products?",
+            "Let's find the best deals for you!"
+        ];
+
+        const hawkerResponses = [
+            "How's your business going?",
+            "Need help with inventory or stall information?",
+            "Ready to assist with your hawker needs.",
+            "Looking for nearby buyers or marketing tips?"
+        ];
+
+        userNameInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                handleUserInput();
+            }
+        });
+
+        userRoleInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                handleUserInput();
+            }
+        });
+
+        userQueryInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                handleUserInput();
+            }
+        });
+
+        function getRandomBotResponse(responses) {
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function appendMessage(message, isUserMessage = false) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message" + (isUserMessage ? " user-message" : " bot-message");
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleUserInput() {
+            const userName = userNameInput.value;
+            const userRole = userRoleInput.value.toLowerCase();
+            const userQuery = userQueryInput.value.trim();
+
+            if (userName.trim() !== "" && (userRole === "hawker" || userRole === "buyer")) {
+                greetUser(userName, userRole);
+            }
+
+            if (userQuery !== "") {
+                appendMessage(userQuery, true);
+                appendMessage(getRandomBotResponse(generalResponses), false);
+                userQueryInput.value = "";
+                userQueryInput.disabled = false;
+                sendButton.disabled = false;
+                userQueryInput.focus();
+            } else {
+                userQueryInput.disabled = false;
+                sendButton.disabled = false;
+                userQueryInput.focus();
+            }
+
+            userNameInput.value = "";
+            userRoleInput.value = "";
+        }
+
+        function greetUser(userName, userRole) {
+            if (userRole === "hawker") {
+                appendMessage(`Hi ${userName}, ${getRandomBotResponse(hawkerResponses)}`);
+            } else if (userRole === "buyer") {
+                appendMessage(`Hi ${userName}, ${getRandomBotResponse(buyerResponses)}`);
+            }
+        }
+    </script>
+</body>
+</html>
